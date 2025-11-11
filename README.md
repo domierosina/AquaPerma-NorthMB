@@ -154,7 +154,7 @@ Details in **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 ---
 
 ## 📝 Citation
-If you use this code for academic work, please cite your course and this repository.
+TBD. 
 
 ---
 
