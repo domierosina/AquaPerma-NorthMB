@@ -1,0 +1,43 @@
+
+# Copy this file to config/config.yaml and edit values for your machine
+project:
+  name: AquaPerma-NorthMB
+  course: GACS/COMP 7205
+  description: NDWI-based surface water change detection in Northern Manitoba
+
+paths:
+  data_dir: data
+  raw_dir: data/raw
+  interim_dir: data/interim
+  processed_dir: data/processed
+  figures_dir: docs/figures
+
+aoi:  # Area of Interest (EPSG:4326)
+  # Provide a GeoJSON FeatureCollection or path to a .geojson/.shp
+  geojson_path: data/aoi/aoi.geojson
+
+temporal_window:
+  start: "2019-01-01"
+  end:   "2024-12-31"
+
+sources:
+  landsat_dswe: true   # Requires pre-downloaded DSWE rasters in data/raw/landsat_dswe
+  sentinel2: false      # Optional: if true, place L2A products in data/raw/sentinel2
+
+processing:
+  ndwi:
+    green_band: 3      # Sentinel-2: B3 (Green); for Landsat adjust in code or script args
+    nir_band: 8        # Sentinel-2: B8 (NIR)
+    nodata: -9999
+  change_detection:
+    method: "difference"  # "difference" or "ratio"
+    threshold: 0.1        # Adjust after checking histograms
+  raster:
+    target_crs: "EPSG:32614" # UTM zone example; set based on AOI
+    resolution: 10           # meters (adjust to source imagery)
+
+output:
+  save_ndwi: true
+  save_masks: true
+  save_change_maps: true
+  save_stats_csv: true
