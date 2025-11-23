@@ -1,0 +1,37 @@
+name: aquaperma
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - pip
+  # Core scientific stack
+  - numpy
+  - scipy
+  - pandas
+  - scikit-image
+  - matplotlib
+  - seaborn
+  # Geospatial stack (use conda-forge only for these!)
+  - gdal
+  - rasterio
+  - geopandas
+  - shapely
+  - fiona
+  - pyproj
+  - rtree
+  # Jupyter + notebooks
+  - jupyter
+  - ipykernel
+  # HTTP + utilities
+  - requests
+  - tqdm
+  - click
+  # Testing (optional)
+  - pytest
+  - pytest-cov
+  # Optional but helpful
+  - pip:
+      - sentinelsat         # optional: Sentinel-2 API client
+      - wget                # optional simplified downloader
