@@ -1,24 +1,37 @@
 #!/usr/bin/env python3
 """
-Download Landsat 8 + DSWE + Sentinel-2 L2A scenes for the Gillam/Keeyask AOI (2016–2021)
-and clip them to a local AOI polygon. Outputs are stored in data/raw/.
+Clip Landsat 8 and Sentinel-2 scenes for the Gillam/Keeyask AOI (2016–2021).
+
+This script assumes that you have already manually downloaded and unzipped
+the scenes into:
+
+    data/raw/landsat/
+    data/raw/sentinel/
+
+See scene.txt for list of scenes
+
+It will:
+  - walk those folders,
+  - find relevant bands (Landsat: B3/B5/QA; Sentinel: B03/B08),
+  - reproject the AOI to each raster's CRS,
+  - clip each raster to the AOI, and
+  - save the results into data/processed/clipped/.
 
 Author: Domenica Burroughs
 Date: 2025.11.23
 """
 
-import os
-import requests
-import zipfile
 from pathlib import Path
+from typing import Dict, Iterable
+
 import rasterio
 from rasterio.mask import mask
-import json
+from rasterio.warp import transform_geom
 
-# ---------------------------------------------------------
-# 1. AOI (Keeyask Reservoir / Gillam Area)
-# ---------------------------------------------------------
-AOI_GEOJSON = {
+# -------------------------------------------------------------------
+# 1. AOI definition (Keeyask / Gillam area) in WGS84
+# -------------------------------------------------------------------
+AOI_WGS84: Dict = {
     "type": "Polygon",
     "coordinates": [[
         [-94.799, 56.32],
@@ -29,159 +42,79 @@ AOI_GEOJSON = {
     ]]
 }
 
+LANDSAT_ROOT = Path("data/raw/landsat")
+SENTINEL_ROOT = Path("data/raw/sentinel")
+CLIPPED_ROOT = Path("data/processed/clipped")
 
-# ---------------------------------------------------------
-# 2. Scene Lists (curated earlier)
-# ---------------------------------------------------------
-LANDSAT_SCENES = [
-    "LC08_L2SP_034020_20160711_20200905_02_T1",
-    "LC08_L2SP_034020_20170730_20200902_02_T1",
-    "LC08_L2SP_034020_20180816_20200822_02_T1",
-    "LC08_L2SP_034020_20190719_20200820_02_T1",
-    "LC08_L2SP_034020_20200705_20200912_02_T1",
-    "LC08_L2SP_034020_20210724_20220128_02_T1"
-]
 
-SENTINEL_SCENES = [
-    "S2A_MSIL2A_20160720T165911_N0204_R112_T15XVS",
-    "S2A_MSIL2A_20170809T165921_N0205_R112_T15XVS",
-    "S2A_MSIL2A_20180818T165921_N0208_R112_T15XVS",
-    "S2B_MSIL2A_20190722T165919_N0213_R112_T15XVS",
-    "S2A_MSIL2A_20200802T165901_N0214_R112_T15XVS",
-    "S2B_MSIL2A_20210725T165919_N0301_R112_T15XVS"
-]
-
-# ---------------------------------------------------------
-# 3. Helper Functions
-# ---------------------------------------------------------
-def ensure_dir(path: Path):
+def ensure_dir(path: Path) -> Path:
     path.mkdir(parents=True, exist_ok=True)
     return path
 
 
-def download_file(url: str, dest: Path):
-    """Download a single file with streaming."""
-    print(f"Downloading: {url}")
-    r = requests.get(url, stream=True)
-    if r.status_code != 200:
-        print(f"Failed: HTTP {r.status_code}")
-        return None
-    with open(dest, "wb") as f:
-        for chunk in r.iter_content(chunk_size=8192):
-            if chunk:
-                f.write(chunk)
-    return dest
-
-
-def clip_raster_to_aoi(infile: Path, outfile: Path, aoi_geojson: dict):
-    """Clip raster to AOI polygon."""
+def clip_raster_to_aoi(infile: Path, outfile: Path, aoi_wgs84: Dict) -> None:
+    """Clip a raster to AOI, reprojecting AOI to the raster CRS."""
     with rasterio.open(infile) as src:
-        out_img, out_transform = mask(
-            src,
-            [aoi_geojson],
-            crop=True
-        )
+        aoi_in_crs = transform_geom("EPSG:4326", src.crs, aoi_wgs84)
+        out_img, out_transform = mask(src, [aoi_in_crs], crop=True)
+
         out_meta = src.meta.copy()
+        out_meta.update(
+            height=out_img.shape[1],
+            width=out_img.shape[2],
+            transform=out_transform,
+        )
 
-        out_meta.update({
-            "height": out_img.shape[1],
-            "width": out_img.shape[2],
-            "transform": out_transform
-        })
-
+        ensure_dir(outfile.parent)
         with rasterio.open(outfile, "w", **out_meta) as dst:
             dst.write(out_img)
 
-    print(f"Clipped: {outfile}")
+    print(f"✔ Clipped: {infile.name} → {outfile}")
 
 
-# ---------------------------------------------------------
-# 4. Landsat Download Function
-# ---------------------------------------------------------
-def download_landsat_scene(scene_id: str, outdir: Path):
-    """
-    Download Landsat 8 Surface Reflectance + DSWE from USGS S3 bucket.
-    """
-    base_url = f"https://landsat-pds.s3.amazonaws.com/c1/L8/{scene_id[10:13]}/{scene_id[13:16]}/{scene_id}"
-
-    target_dir = ensure_dir(outdir / scene_id)
-    print(f"\n=== Downloading Landsat Scene: {scene_id} ===")
-
-    bands = ["B3.TIF", "B5.TIF"]  # Green + NIR
-    qa = "QA_PIXEL.TIF"
-
-    for suffix in bands + [qa]:
-        url = f"{base_url}/{scene_id}_{suffix}"
-        dest = target_dir / f"{scene_id}_{suffix}"
-        download_file(url, dest)
-
-    return target_dir
+def find_files(root: Path, patterns: Iterable[str]) -> Iterable[Path]:
+    """Recursively find files under 'root' matching any of the glob patterns."""
+    for pattern in patterns:
+        for p in root.rglob(pattern):
+            yield p
 
 
-# ---------------------------------------------------------
-# 5. Sentinel-2 Download Function
-# ---------------------------------------------------------
-def download_sentinel_scene(scene_id: str, outdir: Path):
-    """
-    Download Sentinel-2 L2A bands (B03 + B08 only) using AWS bucket.
-    """
-    tile = "15/XV/S"  # tile structure
-    target_dir = ensure_dir(outdir / scene_id)
+def clip_landsat_scenes() -> None:
+    """Clip Landsat B3/B5/QA/DSWE bands under data/raw/landsat/."""
+    if not LANDSAT_ROOT.exists():
+        print(f"⚠ Landsat root not found: {LANDSAT_ROOT.resolve()}")
+        return
 
-    print(f"\n=== Downloading Sentinel-2 Scene: {scene_id} ===")
+    print("\n=== Clipping Landsat scenes ===")
+    patterns = ["*B3*.TIF", "*B5*.TIF", "*QA_PIXEL*.TIF", "*DSWE*.TIF"]
 
-    # Only the Green (B03) & NIR (B08) JP2 files
-    band_files = ["B03.jp2", "B08.jp2"]
-
-    for bf in band_files:
-        url = (
-            f"https://sentinel-cogs.s3.us-west-2.amazonaws.com/"
-            f"sentinel-s2-l2a-cogs/{scene_id}/{bf}"
-        )
-        dest = target_dir / bf
-        download_file(url, dest)
-
-    return target_dir
+    for infile in find_files(LANDSAT_ROOT, patterns):
+        relative = infile.relative_to(LANDSAT_ROOT)
+        outfile = CLIPPED_ROOT / "landsat" / relative
+        clip_raster_to_aoi(infile, outfile, AOI_WGS84)
 
 
-# ---------------------------------------------------------
-# 6. Main 
-# ---------------------------------------------------------
-def run_pipeline():
-    landsat_out = Path("data/raw/landsat")
-    sentinel_out = Path("data/raw/sentinel")
-    clipped_out = Path("data/processed/clipped")
-    ensure_dir(landsat_out)
-    ensure_dir(sentinel_out)
-    ensure_dir(clipped_out)
+def clip_sentinel_scenes() -> None:
+    """Clip Sentinel-2 B03/B08 bands under data/raw/sentinel/."""
+    if not SENTINEL_ROOT.exists():
+        print(f"⚠ Sentinel root not found: {SENTINEL_ROOT.resolve()}")
+        return
 
-    # --- DOWNLOAD LANDSAT SCENES ---
-    for scene in LANDSAT_SCENES:
-        folder = download_landsat_scene(scene, landsat_out)
+    print("\n=== Clipping Sentinel-2 scenes ===")
+    patterns = ["*B03*.jp2", "*B08*.jp2", "*B03*.tif", "*B08*.tif"]
 
-        # Clip the two needed bands
-        for tif in folder.glob("*.TIF"):
-            clip_raster_to_aoi(
-                tif,
-                clipped_out / f"{scene}_{tif.name}",
-                AOI_GEOJSON
-            )
-
-    # --- DOWNLOAD SENTINEL SCENES ---
-    for scene in SENTINEL_SCENES:
-        folder = download_sentinel_scene(scene, sentinel_out)
-
-        for jp2 in folder.glob("*.jp2"):
-            clip_raster_to_aoi(
-                jp2,
-                clipped_out / f"{scene}_{jp2.name}",
-                AOI_GEOJSON
-            )
+    for infile in find_files(SENTINEL_ROOT, patterns):
+        relative = infile.relative_to(SENTINEL_ROOT)
+        outfile = CLIPPED_ROOT / "sentinel" / relative.with_suffix(".tif")
+        clip_raster_to_aoi(infile, outfile, AOI_WGS84)
 
 
-# ---------------------------------------------------------
-# Run when executed directly
-# ---------------------------------------------------------
+def main() -> None:
+    ensure_dir(CLIPPED_ROOT)
+    clip_landsat_scenes()
+    clip_sentinel_scenes()
+    print("\n Finished clipping all available scenes.")
+
+
 if __name__ == "__main__":
-    run_pipeline()
-    print("\nAll downloads + clipping complete!")
+    main()
