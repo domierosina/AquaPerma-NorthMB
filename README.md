@@ -64,13 +64,28 @@ conda env create -f env.yml
 conda activate aquaperma-northmb
 ```
 
-### Option B: pip
+## ⚙️ Environment Setup
+To ensure a reproducible environment, all necessary dependencies are specified in the environment.yml file. We recommend using Conda (Miniconda or Anaconda) to create and manage the environment named aquaperma.
+
+###  🐍 Using Conda
+Follow these steps to create and activate the project environment:
+
+Create the environment from the YAML file:
+
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+conda env create -f environment.yml
 ```
 
+Activate the environment:
+
+```bash
+conda activate aquaperma
+```
+
+Deactivate the environment when you are finished working:
+```bash
+conda deactivate
+```
 ---
 
 ## 🔧 Configuration
