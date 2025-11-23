@@ -140,4 +140,4 @@ TBD.
 ---
 
 ## 🙏 Acknowledgements
-Built for GACS/COMP 7205 coursework. Inspired by the structure of the example repos and uses Rasterio/GeoPandas/OpenCV/scikit-image/QGIS.
+Built for GACS 7205 coursework. Inspired by the structure of the example repos and uses Rasterio/GeoPandas/OpenCV/scikit-image/QGIS.
