@@ -5,21 +5,6 @@ NDWI-based surface water change detection in Northern Manitoba (GACS/COMP 7205)
 [![CI](https://github.com/USER/AquaPerma-NorthMB/actions/workflows/ci.yml/badge.svg)](#)
 
 ---
-
-## 📌 How this repo meets the grading criteria
-
-- **GitHub repository created:** This repository is structured and ready to publish.
-- **Proper Git usage:** See **[CONTRIBUTING.md](CONTRIBUTING.md)** for branching, commits, pushes, and PR workflow. Includes commit message guidelines and a lightweight Git flow.
-- **Code comments for clarity:** All modules in `src/` include docstrings and inline comments explaining inputs/outputs and assumptions.
-- **Management of raw data:** `data/README.md` explains folder policy, filenames, and options for large files (Git LFS or external storage). `.gitignore` excludes large/raw data by default.
-- **Well-structured README:** This document provides setup, usage, repo structure, and reproducibility notes.
-
-> Example repos provided by instructor:
-> - https://github.com/Kylelhc/BC_RadiogenomicCPDM
-> - https://github.com/mattthuang/BC_RadiogenomicGAN
-
----
-
 ## 🧭 Overview
 This repository provides a compact, reproducible pipeline to **detect and visualize surface water changes** in **Northern Manitoba** using **multi-temporal satellite imagery** and **NDWI**. It emphasizes a workflow that runs on modest hardware while remaining transparent and extensible.
 
@@ -140,16 +125,6 @@ See `data/README.md` for:
 - Recommended filenames and metadata
 - Handling large files (Git LFS vs. external storage)
 - Reproducibility tips
-
----
-
-## 🔄 Git Workflow (for grading)
-- Create feature branches from `main` (e.g., `feature/ndwi-thresholding`).
-- Make **small, frequent commits** with descriptive messages.
-- Push branches and open Pull Requests to merge into `main`.
-- Tag milestone commits (e.g., `v0.1-proposal-demo`).
-
-Details in **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 
 ---
 
