@@ -57,13 +57,6 @@ AquaPerma-NorthMB/
 
 ---
 
-## ⚙️ Setup
-### Option A: Conda (recommended)
-```bash
-conda env create -f env.yml
-conda activate aquaperma-northmb
-```
-
 ## ⚙️ Environment Setup
 To ensure a reproducible environment, all necessary dependencies are specified in the environment.yml file. We recommend using Conda (Miniconda or Anaconda) to create and manage the environment named aquaperma.
 
