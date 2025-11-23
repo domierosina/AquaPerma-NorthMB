@@ -1,8 +1,6 @@
 
 # AquaPerma-NorthMB
-NDWI-based surface water change detection in Northern Manitoba (GACS/COMP 7205)
-
-[![CI](https://github.com/USER/AquaPerma-NorthMB/actions/workflows/ci.yml/badge.svg)](#)
+NDWI-based surface water change detection in Northern Manitoba (GACS 7205)
 
 ---
 ## 🧭 Overview
