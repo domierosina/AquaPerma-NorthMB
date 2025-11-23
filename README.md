@@ -57,20 +57,28 @@ AquaPerma-NorthMB/
 
 ---
 
-## ⚙️ Setup
-### Option A: Conda (recommended)
+## ⚙️ Environment Setup
+To ensure a reproducible environment, all necessary dependencies are specified in the environment.yml file. We recommend using Conda (Miniconda or Anaconda) to create and manage the environment named aquaperma.
+
+###  🐍 Using Conda
+Follow these steps to create and activate the project environment:
+
+Create the environment from the YAML file:
+
 ```bash
-conda env create -f env.yml
-conda activate aquaperma-northmb
+conda env create -f environment.yml
 ```
 
-### Option B: pip
+Activate the environment:
+
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+conda activate aquaperma
 ```
 
+Deactivate the environment when you are finished working:
+```bash
+conda deactivate
+```
 ---
 
 ## 🔧 Configuration
@@ -132,4 +140,4 @@ TBD.
 ---
 
 ## 🙏 Acknowledgements
-Built for GACS/COMP 7205 coursework. Inspired by the structure of the example repos and uses Rasterio/GeoPandas/OpenCV/scikit-image/QGIS.
+Built for GACS 7205 coursework. Inspired by the structure of the example repos and uses Rasterio/GeoPandas/OpenCV/scikit-image/QGIS.
