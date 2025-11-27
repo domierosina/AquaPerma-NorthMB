@@ -132,6 +132,8 @@ See `data/README.md` for:
 - Handling large files (Git LFS vs. external storage)
 - Reproducibility tips
 
+- RawData is currently hosted on OneDrive
+
 ---
 
 ## 📝 Citation
