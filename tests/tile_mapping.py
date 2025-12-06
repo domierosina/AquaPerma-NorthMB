@@ -77,16 +77,28 @@ def match_aoi_to_tiles(aoi_geometries, tile_grid_path, id_column='Name'):
 # --------------------------
 def plot_aoi_with_tiles(aoi_geometries, sentinel_gdf=None, landsat_gdf=None):
     """
-    Plot AOI and optionally Sentinel & Landsat tiles.
+    Plot AOI and optionally Sentinel & Landsat tiles, with tile labels.
     """
     fig, ax = plt.subplots(figsize=(10, 10))
 
+    # Plot Sentinel tiles
     if sentinel_gdf is not None:
         sentinel_gdf.boundary.plot(ax=ax, color='blue', linewidth=1, label='Sentinel-2 Tiles')
+        for idx, row in sentinel_gdf.iterrows():
+            if 'Name' in row:
+                x, y = row.geometry.centroid.x, row.geometry.centroid.y
+                ax.text(x, y, row['Name'], color='blue', fontsize=8, ha='center', va='center')
 
+    # Plot Landsat tiles
     if landsat_gdf is not None:
         landsat_gdf.boundary.plot(ax=ax, color='green', linewidth=1, label='Landsat Tiles')
+        for idx, row in landsat_gdf.iterrows():
+            if 'PATH' in row and 'ROW' in row:
+                x, y = row.geometry.centroid.x, row.geometry.centroid.y
+                tile_label = f"{row['PATH']}-{row['ROW']}"
+                ax.text(x, y, tile_label, color='green', fontsize=8, ha='center', va='center')
 
+    # Plot AOI geometries
     for geom in aoi_geometries:
         gpd.GeoSeries([geom]).boundary.plot(ax=ax, color='red', linewidth=2, label='AOI')
 
