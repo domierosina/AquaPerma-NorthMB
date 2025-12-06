@@ -61,3 +61,5 @@ data/processed/
 # Logs
 logs/
 *.log
+/7205
+/data/landsat_zipped
