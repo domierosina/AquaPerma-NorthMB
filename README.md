@@ -19,22 +19,13 @@ This repository provides a compact, reproducible pipeline to **detect and visual
 ## 🗂 Repository Structure
 ```
 AquaPerma-NorthMB/
-├── .github/workflows/ci.yml           # CI: lint + tests
-├── .flake8                            # Linting rules
-├── CONTRIBUTING.md                    # Git workflow and commit rules
 ├── LICENSE
-├── Makefile                           # Common commands
 ├── README.md
-├── requirements.txt
-├── env.yml
-├── pytest.ini
-├── config/
-│   └── config.example.yaml
+├── environment.yml
 ├── data/
 │   ├── README.md                      # Data management policy
 │   ├── aoi/                           # Area of interest files
 │   ├── raw/
-│   ├── interim/
 │   └── processed/
 ├── docs/
 │   ├── USAGE.md                       # Step-by-step usage guide
