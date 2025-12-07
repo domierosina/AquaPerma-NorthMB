@@ -5,7 +5,7 @@ channels:
 
 dependencies:
   - python=3.10
-  - pip
+
   # Core scientific stack
   - numpy
   - scipy
@@ -13,7 +13,8 @@ dependencies:
   - scikit-image
   - matplotlib
   - seaborn
-  # Geospatial stack (use conda-forge only for these!)
+
+  # Geospatial stack (conda-forge recommended)
   - gdal
   - rasterio
   - geopandas
@@ -21,17 +22,23 @@ dependencies:
   - fiona
   - pyproj
   - rtree
-  # Jupyter + notebooks
+  - rioxarray
+
+  # Jupyter ecosystem
   - jupyter
   - ipykernel
+
   # HTTP + utilities
   - requests
   - tqdm
   - click
-  # Testing (optional)
+
+  # Testing
   - pytest
   - pytest-cov
-  # Optional but helpful
+
+  # General Python utilities
+  - pip
+
   - pip:
-      - sentinelsat         # optional: Sentinel-2 API client
-      - wget                # optional simplified downloader
+      - boto3
