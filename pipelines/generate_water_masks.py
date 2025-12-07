@@ -142,7 +142,7 @@ plt.title('Water Area per Scene')
 plt.tight_layout()
 plt.savefig(OUT_DIR / 'water_area_plot.png', dpi=PLOT_DPI)
 plt.close()
-print(f"Water area plot saved to {OUTPUT_WATER_AREA_PLOT}")
+print(f"Water area plot saved to {OUT_DIR / 'water_area_plot.png'}")
 
 # -------------------
 # PLOT PERCENT WATER OVER TIME
@@ -155,4 +155,4 @@ plt.title('Percent Water per Scene')
 plt.tight_layout()
 plt.savefig(OUT_DIR / 'percent_water_plot.png', dpi=PLOT_DPI)
 plt.close()
-print(f"Percent water plot saved to {OUTPUT_PERCENT_WATER_PLOT}")
+print(f"Percent water plot saved to {OUT_DIR / 'percent_water_plot.png'}")
