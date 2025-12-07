@@ -35,110 +35,124 @@
 ===============================================================================
 """
 
-# %%
-import rasterio
+
+import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
+import rasterio
 import matplotlib.pyplot as plt
-from pathlib import Path
+from tqdm import tqdm
 
-# %%
 # -------------------
-# USER CONFIG
+# User Config
 # -------------------
-NDWI_FOLDER = Path("data/processed/landsat_processed")
-THRESHOLD = 0.3
+LANDSAT_PROCESSED_DIR = Path("data/processed/landsat_processed")
+OUT_DIR = LANDSAT_PROCESSED_DIR
+OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+# ----------------------
+# Threshold settings
+# ----------------------
+USE_MANUAL_THRESHOLD = False   # Set True to manually define threshold
+MANUAL_THRESHOLD = 0.0        # Only used if USE_MANUAL_THRESHOLD = True
+
+# Quick-look PNG settings
 PLOT_DPI = 150
-OUTPUT_CSV = NDWI_FOLDER / "landsat_water_summary.csv"
-OUTPUT_WATER_AREA_PLOT = NDWI_FOLDER / "water_area_plot.png"
-OUTPUT_PERCENT_WATER_PLOT = NDWI_FOLDER / "percent_water_plot.png"
 
 # -------------------
-# PROCESS ALL SCENES
+# Processing loop
 # -------------------
-scene_dirs = [d for d in NDWI_FOLDER.iterdir() if d.is_dir()]
-summary_list = []
+results = []
 
-for scene_dir in scene_dirs:
-    ndwi_path = scene_dir / f"{scene_dir.name}_NDWI.tif"
-    if not ndwi_path.exists():
-        print(f"NDWI file not found for {scene_dir.name}, skipping...")
+for scene_folder in sorted(LANDSAT_PROCESSED_DIR.iterdir()):
+    if not scene_folder.is_dir():
         continue
 
-    # read NDWI
+    ndwi_files = list(scene_folder.glob("*_NDWI.tif"))
+    if not ndwi_files:
+        print(f"No NDWI file found for scene {scene_folder.name}")
+        continue
+
+    ndwi_path = ndwi_files[0]
+
     with rasterio.open(ndwi_path) as src:
-        ndwi_arr = src.read(1)
+        ndwi_arr = src.read(1).astype(np.float32)
         meta = src.meta.copy()
-        transform = src.transform
-        pixel_area = abs(transform.a * transform.e)  # in map units (m² if UTM)
 
-    # generate binary water mask
-    water_mask = (ndwi_arr > THRESHOLD).astype(np.uint8)
+    # Determine threshold per scene
+    if USE_MANUAL_THRESHOLD:
+        threshold = MANUAL_THRESHOLD
+    else:
+        ndwi_valid = ndwi_arr[~np.isnan(ndwi_arr)]
+        threshold = ndwi_valid.mean() + 0.5 * ndwi_valid.std()
 
-    # save water mask GeoTIFF
-    out_mask_path = scene_dir / f"{scene_dir.name}_water_mask.tif"
-    meta.update(dtype=rasterio.uint8, count=1, compress='deflate')
-    meta.pop('nodata', None)  # remove any existing nodata
+    # Generate water mask
+    water_mask = (ndwi_arr > threshold).astype(np.uint8)
+
+    # Write water mask GeoTIFF
+    out_mask_path = scene_folder / f"{scene_folder.name}_water_mask.tif"
+    meta.update(dtype=rasterio.uint8, count=1, compress='deflate', nodata=0)
     with rasterio.open(out_mask_path, 'w', **meta) as dst:
         dst.write(water_mask, 1)
 
-    # save quick-look PNG
-    out_png_path = scene_dir / f"{scene_dir.name}_water_mask.png"
+    # Quick-look PNG
+    plt.figure(figsize=(8, 8))
     plt.imshow(water_mask, cmap='Blues')
-    plt.title(f"{scene_dir.name} Water Mask")
+    plt.title(scene_folder.name)
     plt.axis('off')
-    plt.savefig(out_png_path, dpi=PLOT_DPI)
+    png_out = scene_folder / f"{scene_folder.name}_water_mask.png"
+    plt.savefig(png_out, dpi=PLOT_DPI)
     plt.close()
 
-    # compute water area metrics
-    total_pixels = np.count_nonzero(water_mask >= 0)  # all valid pixels
-    water_pixels = np.sum(water_mask == 1)
-    water_area = water_pixels * pixel_area
+    # Water stats
+    total_pixels = np.count_nonzero(~np.isnan(ndwi_arr))
+    water_pixels = np.count_nonzero(water_mask)
+    pixel_area_m2 = abs(meta['transform'][0] * meta['transform'][4])
+    water_area_m2 = water_pixels * pixel_area_m2
     percent_water = (water_pixels / total_pixels) * 100
 
-    summary_list.append({
-        "scene": scene_dir.name,
-        "total_pixels": total_pixels,
-        "water_pixels": water_pixels,
-        "water_area_m2": water_area,
-        "percent_water": percent_water
+    results.append({
+        'scene': scene_folder.name,
+        'total_pixels': total_pixels,
+        'water_pixels': water_pixels,
+        'water_area_m2': water_area_m2,
+        'percent_water': percent_water
     })
 
-    print(f"Processed {scene_dir.name}: water pixels = {water_pixels}, percent water = {percent_water:.2f}%")
+    print(f"Processed {scene_folder.name}: water pixels = {water_pixels}, percent water = {percent_water:.2f}%")
 
 # -------------------
 # SAVE CSV SUMMARY
 # -------------------
-df = pd.DataFrame(summary_list)
-df = df.sort_values("scene")
-df.to_csv(OUTPUT_CSV, index=False)
-print(f"\nWater summary saved to {OUTPUT_CSV}")
-print(df)
+summary_df = pd.DataFrame(results)
+summary_csv = OUT_DIR / 'landsat_water_summary.csv'
+summary_df.to_csv(summary_csv, index=False)
+print(f"\nWater summary saved to {summary_csv}")
 
 # -------------------
 # PLOT WATER AREA OVER TIME
 # -------------------
-plt.figure(figsize=(10,5))
-plt.plot(df['scene'], df['water_area_m2']/1e6, marker='o')  # convert m² to km²
-plt.xticks(rotation=45)
-plt.xlabel("Scene")
-plt.ylabel("Water Area (km²)")
-plt.title("Landsat Water Area Over Time")
+plt.figure(figsize=(10, 4))
+plt.plot(summary_df['scene'], summary_df['water_area_m2']/1e6, marker='o')
+plt.xticks(rotation=45, ha='right')
+plt.ylabel('Water Area (km²)')
+plt.title('Water Area per Scene')
 plt.tight_layout()
-plt.savefig(OUTPUT_WATER_AREA_PLOT, dpi=PLOT_DPI)
+plt.savefig(OUT_DIR / 'water_area_plot.png', dpi=PLOT_DPI)
 plt.close()
 print(f"Water area plot saved to {OUTPUT_WATER_AREA_PLOT}")
 
 # -------------------
 # PLOT PERCENT WATER OVER TIME
 # -------------------
-plt.figure(figsize=(10,5))
-plt.plot(df['scene'], df['percent_water'], marker='o', color='green')
-plt.xticks(rotation=45)
-plt.xlabel("Scene")
-plt.ylabel("Percent Water (%)")
-plt.title("Landsat Percent Water Over Time")
+plt.figure(figsize=(10, 4))
+plt.plot(summary_df['scene'], summary_df['percent_water'], marker='o')
+plt.xticks(rotation=45, ha='right')
+plt.ylabel('Percent Water (%)')
+plt.title('Percent Water per Scene')
 plt.tight_layout()
-plt.savefig(OUTPUT_PERCENT_WATER_PLOT, dpi=PLOT_DPI)
+plt.savefig(OUT_DIR / 'percent_water_plot.png', dpi=PLOT_DPI)
 plt.close()
 print(f"Percent water plot saved to {OUTPUT_PERCENT_WATER_PLOT}")
