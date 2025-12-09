@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "Untitled map",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "id": 0, "properties": { "Name": "57°15'33.1\"N 98°10'45.8\"W", "Description": "" }, "geometry": { "type": "Point", "coordinates": [ -98.1794, 57.2592, 0.0 ] } },
+{ "type": "Feature", "id": 1, "properties": { "Name": "aoi", "Description": "" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -101.153346273948998, 56.133833274875073, 0.0 ], [ -95.392525872667605, 56.115459774398829, 0.0 ], [ -95.18159281474216, 58.26899070490655, 0.0 ], [ -101.347000800592298, 58.274071733880447, 0.0 ], [ -101.153346273948998, 56.133833274875073, 0.0 ] ] ] } }
+]
+}
