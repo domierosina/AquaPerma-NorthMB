@@ -65,3 +65,5 @@ logs/
 /data/landsat_zipped
 env.yml
 /tobemade
+notebooks/credentials.py
+/test
