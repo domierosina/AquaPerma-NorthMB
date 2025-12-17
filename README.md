@@ -127,8 +127,17 @@ See `data/README.md` for:
 
 ---
 
+## Auxiliary Scripts
+
+The `auxiliary/` folder contains helper or test scripts that may be useful for:
+- Checking or converting AOI files
+- Testing NDWI or other indices
+- Debugging or exploring the pipeline
+
+These scripts are **not required** for the main processing workflow.
+
 ## 📝 Citation
-TBD. 
+Included in final paper. 
 
 ---
 

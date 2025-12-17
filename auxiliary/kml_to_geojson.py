@@ -1,8 +1,8 @@
 import os
 from osgeo import ogr
 
-KML_PATH = "/Users/domenica/Desktop/AquaPerma-NorthMB/data/aoi/2025_aoi.kml"
-GEOJSON_PATH = "/Users/domenica/Desktop/AquaPerma-NorthMB/data/aoi/2025_aoi.geojson"
+KML_PATH = "/Users/domenica/Desktop/AquaPerma-NorthMB/data/aoi/7205_AOI.kml"
+GEOJSON_PATH = "/Users/domenica/Desktop/AquaPerma-NorthMB/data/aoi/7205_AOI.geojson"
 
 # Open the KML
 driver = ogr.GetDriverByName('KML')
