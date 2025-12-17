@@ -7,12 +7,12 @@ NDWI-based surface water change detection in Northern Manitoba (GACS 7205)
 This repository provides a compact, reproducible pipeline to **detect and visualize surface water changes** in **Northern Manitoba** using **multi-temporal satellite imagery** and **NDWI**. It emphasizes a workflow that runs on modest hardware while remaining transparent and extensible.
 
 ### Key Features
-- NDWI computation and water mask creation for time slices
-- Simple **temporal change detection** via difference/thresholding
-- CLI commands for NDWI, change detection, quicklooks, and summary stats
-- Clean folder structure and configuration-driven paths
-- Hooks for Landsat DSWE and Sentinel-2 inputs
-- CI pipeline (pytest + flake8) for basic quality checks
+- NDWI computation and water mask creation
+- Year-to-year and multi-year surface water change detection
+- Per-pixel % NDWI change maps
+- Sensor-specific multi-panel summaries
+- Quantitative CSV summaries
+- Supports Landsat 8 and Sentinel-2 imagery
 
 ---
 
@@ -23,27 +23,18 @@ AquaPerma-NorthMB/
 ├── README.md
 ├── environment.yml
 ├── data/
-│   ├── README.md                      # Data management policy
 │   ├── aoi/                           # Area of interest files
 │   ├── raw/
-│   └── processed/
+│   └── results/
 ├── docs/
-│   ├── USAGE.md                       # Step-by-step usage guide
-│   └── figures/
+│   ├── Proposal.pdf
+│   ├── FinalPaper.pdf
+│   └── visuals/                  
 ├── notebooks/
-│   └── 00_sanity_check.ipynb          # Optional EDA placeholder
-├── scripts/
-│   └── prepare_example_data.py        # Guidance for local test data
-├── src/
-│   ├── __init__.py
-│   ├── cli.py
-│   ├── ndwi.py
-│   ├── change_detection.py
-│   ├── preprocessing.py
-│   ├── stats.py
-│   └── viz.py
-└── tests/
-    └── test_ndwi.py
+│   └── 00_sanity_check.ipynb          
+└── auxiliary/
+    └── prepare_example_data.py        
+
 ```
 
 ---
@@ -55,17 +46,10 @@ To ensure a reproducible environment, all necessary dependencies are specified i
 Follow these steps to create and activate the project environment:
 
 Create the environment from the YAML file:
-
 ```bash
 conda env create -f environment.yml
-```
-
-Activate the environment:
-
-```bash
 conda activate aquaperma
 ```
-
 Deactivate the environment when you are finished working:
 ```bash
 conda deactivate
@@ -100,31 +84,6 @@ Summarize a binary water mask (0/1) to CSV:
 ```bash
 python -m src.cli summarize   --mask data/processed/water_mask_2024.tif   --out_csv data/processed/water_area_2024.csv
 ```
-
----
-
-## 🧪 Quality (CI), Linting, and Tests
-- Run tests locally:
-```bash
-pytest -q
-```
-- Lint the code:
-```bash
-flake8 src
-```
-- The GitHub Action in `.github/workflows/ci.yml` runs both on every push/PR.
-
----
-
-## 🗄 Data Management Policy
-See `data/README.md` for:
-- Raw vs. interim vs. processed directories
-- Recommended filenames and metadata
-- Handling large files (Git LFS vs. external storage)
-- Reproducibility tips
-
-- RawData is currently hosted on OneDrive
-
 ---
 
 ## Auxiliary Scripts
@@ -135,6 +94,7 @@ The `auxiliary/` folder contains helper or test scripts that may be useful for:
 - Debugging or exploring the pipeline
 
 These scripts are **not required** for the main processing workflow.
+---
 
 ## 📝 Citation
 Included in final paper. 
