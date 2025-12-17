@@ -23,18 +23,32 @@ AquaPerma-NorthMB/
 ├── README.md
 ├── environment.yml
 ├── data/
-│   ├── aoi/                           # Area of interest files
+│   ├── aoi/                                           # Area of interest files
 │   ├── raw/
+│       │   ├── sentinel2/
+│       │   └── landsat8/   
 │   └── results/
+│       │   ├── sentinel2/
+│       │   ├── landsat8/
+│       │   └── report/
 ├── docs/
 │   ├── Proposal.pdf
 │   ├── FinalPaper.pdf
 │   └── visuals/                  
 ├── notebooks/
-│   └── 00_sanity_check.ipynb          
-└── auxiliary/
-    └── prepare_example_data.py        
-
+│   ├── 00_AOI_Map_Print.ipynb
+│   ├── 00_download_and_QA_larger_AOI.ipynb
+│   ├── 01_sanity_check_backends_options.ipynb
+│   ├── 02_scene_selection_and_data_download.ipynb
+│   └── 03_surface_water_change_analysis.ipynb          
+└── auxiliary/                                         # Scripts made to speed up development. OPTIONAL
+    ├── pipelines/
+    ├── WRS2_descending_0/
+    ├── kml_to_geojson.py
+    ├── test_ndwi.py
+    ├── check_kml.py
+    ├── ndvi_maps_and_delta.py
+    └── tile_mapping.py  
 ```
 
 ---
@@ -55,35 +69,78 @@ Deactivate the environment when you are finished working:
 conda deactivate
 ```
 ---
+###  🔑 Data Access (VITO openEO)
+This project utilizes the VITO openEO backend (openeo.vito.be) to access Sentinel-2 and Landsat imagery without manually downloading raw scenes.
+1. Create a VITO openEO Account
+2. Go to the VITO openEO portal: 👉 https://portal.openeo.vito.be
+3. Click Sign up and create a free account using: GitHub OR institutional email
+4. Once logged in, your account is automatically enabled for: Sentinel-2 (L1C / L2A), Landsat 8–9, Batch processing via openEO
 
-## 🔧 Configuration
-1. Copy `config/config.example.yaml` to `config/config.yaml` and edit:
-   - Paths (`data_dir`, etc.)
-   - AOI (`aoi.geojson` path)
-   - Temporal window (`start`, `end`)
-   - Source toggles (`landsat_dswe`, `sentinel2`)
-   - Raster CRS and resolution
-2. Place inputs under `data/raw/` (e.g., `landsat_dswe/` or `sentinel2/`).
+*No API key is required. Authentication uses OAuth via your browser.*
+
+--- 
+
+## 🔧 Requirements
+Key Python packages (from environment.yml):
+- numpy
+- pandas
+- rasterio
+- geopandas
+- matplotlib
+- folium
+- openeo (for scene downloads)
+- tqdm
 
 ---
 
-## ▶️ Usage (CLI)
-Compute NDWI and change maps driven by your config:
-```bash
-python -m src.cli --config config/config.yaml ndwi   --input data/raw/landsat_dswe/example_green.tif   --nir data/raw/landsat_dswe/example_nir.tif   --out data/processed/ndwi_example.tif
+## ▶️ Usage
+1️⃣ Scene Selection & Download (openEO)
+Notebook: `02_scene_selection_and_data_download.ipynb`
 
-python -m src.cli --config config/config.yaml change-detect   --t1 data/processed/ndwi_2019.tif   --t2 data/processed/ndwi_2024.tif   --out data/processed/ndwi_change_2019_2024.tif   --threshold 0.1
-```
+This notebook:
+- Connects to the VITO openEO backend
+- Loads Sentinel-2 and Landsat collections
+- Filters by AOI, date range, and cloud cover
+- Computes NDWI
+- Exports NDWI and binary water mask GeoTIFFs
 
-Generate a quicklook PNG from any raster:
-```bash
-python -m src.cli quicklook   --raster data/processed/ndwi_example.tif   --out_png docs/figures/ndwi_example.png
-```
+Inputs
+- AOI file (.geojson or .kml)
+- Date ranges (summer months)
+- Sensor selection
 
-Summarize a binary water mask (0/1) to CSV:
-```bash
-python -m src.cli summarize   --mask data/processed/water_mask_2024.tif   --out_csv data/processed/water_area_2024.csv
-```
+Outputs
+- NDWI GeoTIFFs
+- Water mask GeoTIFFs
+- Saved under data/results/<sensor>/
+
+Run with:
+`jupyter notebook notebooks/02_scene_selection_and_data_download.ipynb`
+
+2️⃣ NDWI Change Detection & Analysis
+
+Notebook: `03_surface_water_change_analysis.ipynb`
+
+This notebook performs all temporal analysis using the downloaded NDWI rasters.
+
+Generated outputs (8 total):
+- Year-to-year ΔNDWI maps
+- Year-to-year water gain/loss overlays
+- Multi-year water persistence maps
+- Earliest → latest ΔNDWI maps
+- Earliest → latest per-pixel % NDWI change maps
+- Quantitative CSV summary
+- Sensor-specific multi-panel summary figures
+- Per-pixel % NDWI change for consecutive years
+
+Run with:
+`jupyter notebook notebooks/03_surface_water_change_analysis.ipynb`
+
+Notes for Reproducibility
+- All processing is done server-side via openEO until final GeoTIFF export
+- No raw satellite scenes are downloaded
+- The workflow is reproducible with only: AOI file, openEO account, Defined date ranges
+
 ---
 
 ## Auxiliary Scripts
@@ -96,8 +153,34 @@ The `auxiliary/` folder contains helper or test scripts that may be useful for:
 These scripts are **not required** for the main processing workflow.
 ---
 
-## 📝 Citation
-Included in final paper. 
+## 📝 Data Sources and Citations
+Full citations in final paper. This project uses publicly available Earth observation data accessed via the VITO openEO platform.
+
+**Satellite Data**
+_Sentinel-2_
+European Space Agency (ESA).
+Sentinel-2 MSI Level-1C and Level-2A products.
+Accessed via the openEO VITO backend.
+
+_Landsat 8–9_
+U.S. Geological Survey (USGS) & National Aeronautics and Space Administration (NASA).
+Landsat Collection 2 Level-2 products.
+Accessed via the openEO VITO backend.
+
+****NDWI Reference****
+McFeeters, S. K. (1996).
+The use of the Normalized Difference Water Index (NDWI) in the delineation of open water features.
+International Journal of Remote Sensing, 17(7), 1425–1432.
+https://doi.org/10.1080/01431169608948714
+
+**Platform Citations**
+_openEO Platform_
+openEO Consortium.
+https://openeo.org
+
+_VITO openEO Backend_
+Flemish Institute for Technological Research (VITO).
+https://openeo.vito.be
 
 ---
 
