@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sources xmlns="http://schemas.openxmlformats.org/officeDocument/2006/bibliography">
+  <Source>
+    <Tag>Quinton2011</Tag>
+    <SourceType>JournalArticle</SourceType>
+    <Author>
+      <Author>
+        <Last>Quinton</Last><First>W.</First><Middle>L.</Middle>
+      </Author>
+      <Author>
+        <Last>Hayashi</Last><First>M.</First>
+      </Author>
+      <Author>
+        <Last>Chasmer</Last><First>L.</First>
+      </Author>
+    </Author>
+    <Title>Permafrost–groundwater interactions and hydrologic connectivity in the subarctic</Title>
+    <JournalName>Hydrological Processes</JournalName>
+    <Year>2011</Year>
+    <Volume>25</Volume>
+    <Issue>21</Issue>
+    <Pages>3476-3487</Pages>
+  </Source>
+
+  <Source>
+    <Tag>Prowse2015</Tag>
+    <SourceType>JournalArticle</SourceType>
+    <Author>
+      <Author><Last>Prowse</Last><First>T.</First></Author>
+    </Author>
+    <Title>Arctic freshwater synthesis: Summary of key emerging issues</Title>
+    <JournalName>Journal of Geophysical Research: Biogeosciences</JournalName>
+    <Year>2015</Year>
+    <Volume>120</Volume>
+    <Issue>10</Issue>
+    <Pages>1887-1893</Pages>
+  </Source>
+
+  <Source>
+    <Tag>Smith2010</Tag>
+    <SourceType>JournalArticle</SourceType>
+    <Author>
+      <Author><Last>Smith</Last><First>S.</First><Middle>L.</Middle></Author>
+    </Author>
+    <Title>Thermal state of permafrost in North America</Title>
+    <JournalName>Permafrost and Periglacial Processes</JournalName>
+    <Year>2010</Year>
+    <Volume>21</Volume>
+    <Issue>2</Issue>
+    <Pages>117-135</Pages>
+  </Source>
+
+  <Source>
+    <Tag>Kokelj2013</Tag>
+    <SourceType>JournalArticle</SourceType>
+    <Author>
+      <Author><Last>Kokelj</Last><First>J.</First></Author>
+    </Author>
+    <Title>Thaw-driven mass wasting couples slopes with downstream systems</Title>
+    <JournalName>Journal of Geophysical Research: Earth Surface</JournalName>
+    <Year>2013</Year>
+    <Volume>118</Volume>
+    <Issue>2</Issue>
+    <Pages>1106-1120</Pages>
+  </Source>
+
+  <Source>
+    <Tag>McFeeters1996</Tag>
+    <SourceType>JournalArticle</SourceType>
+    <Author>
+      <Author><Last>McFeeters</Last><First>S.</First><Middle>K.</Middle></Author>
+    </Author>
+    <Title>The use of the Normalized Difference Water Index (NDWI) in the delineation of open water features</Title>
+    <JournalName>International Journal of Remote Sensing</JournalName>
+    <Year>1996</Year>
+    <Volume>17</Volume>
+    <Issue>7</Issue>
+    <Pages>1425-1432</Pages>
+  </Source>
+
+  <Source>
+    <Tag>Xu2006</Tag>
+    <SourceType>JournalArticle</SourceType>
+    <Author>
+      <Author><Last>Xu</Last><First>H.</First></Author>
+    </Author>
+    <Title>Modification of Normalized Difference Water Index (NDWI) to enhance open water features</Title>
+    <JournalName>International Journal of Remote Sensing</JournalName>
+    <Year>2006</Year>
+    <Volume>27</Volume>
+    <Issue>14</Issue>
+    <Pages>3025-3033</Pages>
+  </Source>
+
+  <Source>
+    <Tag>Ji2009</Tag>
+    <SourceType>JournalArticle</SourceType>
+    <Author>
+      <Author><Last>Ji</Last><First>L.</First></Author>
+      <Author><Last>Zhang</Last><First>L.</First></Author>
+      <Author><Last>Wylie</Last><First>B.</First></Author>
+    </Author>
+    <Title>Analysis of dynamic thresholds for the Normalized Difference Water Index</Title>
+    <JournalName>Photogrammetric Engineering &amp; Remote Sensing</JournalName>
+    <Year>2009</Year>
+    <Volume>75</Volume>
+    <Issue>11</Issue>
+    <Pages>1307-1317</Pages>
+  </Source>
+
+  <Source>
+    <Tag>Feyisa2014</Tag>
+    <SourceType>JournalArticle</SourceType>
+    <Author>
+      <Author><Last>Feyisa</Last><First>F.</First></Author>
+    </Author>
+    <Title>Automated Water Extraction Index: A new technique for surface water mapping</Title>
+    <JournalName>Remote Sensing of Environment</JournalName>
+    <Year>2014</Year>
+    <Volume>140</Volume>
+    <Pages>23-35</Pages>
+  </Source>
+
+  <Source>
+    <Tag>LandsatDSWE</Tag>
+    <SourceType>Report</SourceType>
+    <CorporateAuthor>U.S. Geological Survey</CorporateAuthor>
+    <Title>Landsat Level-3 Dynamic Surface Water Extent, Collection 2</Title>
+    <Year>2022</Year>
+    <URL>https://doi.org/10.5066/P9DPWBUS</URL>
+  </Source>
+
+  <Source>
+    <Tag>Sentinel2</Tag>
+    <SourceType>WebSite</SourceType>
+    <CorporateAuthor>European Space Agency</CorporateAuthor>
+    <Title>Copernicus Sentinel-2 Satellite Imagery</Title>
+    <URL>https://dataspace.copernicus.eu/data-collections/copernicus-sentinel-data/sentinel-2</URL>
+  </Source>
+
+  <Source>
+    <Tag>Gorelick2017</Tag>
+    <SourceType>JournalArticle</SourceType>
+    <Author>
+      <Author><Last>Gorelick</Last><First>N.</First></Author>
+    </Author>
+    <Title>Google Earth Engine: Planetary-scale geospatial analysis for everyone</Title>
+    <JournalName>Remote Sensing of Environment</JournalName>
+    <Year>2017</Year>
+    <Volume>202</Volume>
+    <Pages>18-27</Pages>
+  </Source>
+
+  <Source>
+    <Tag>openEO</Tag>
+    <SourceType>WebSite</SourceType>
+    <CorporateAuthor>openEO Foundation</CorporateAuthor>
+    <Title>openEO API for Earth Observation</Title>
+    <URL>https://openeo.org</URL>
+  </Source>
+
+  <Source>
+    <Tag>Rasterio</Tag>
+    <SourceType>WebSite</SourceType>
+    <CorporateAuthor>Rasterio Development Team</CorporateAuthor>
+    <Title>Rasterio: Access to Geospatial Raster Data</Title>
+    <URL>https://rasterio.readthedocs.io/en/latest/</URL>
+  </Source>
+
+  <Source>
+    <Tag>OpenCV</Tag>
+    <SourceType>WebSite</SourceType>
+    <CorporateAuthor>OpenCV Development Team</CorporateAuthor>
+    <Title>Reading Geospatial Raster Files with GDAL</Title>
+    <URL>https://docs.opencv.org/4.x/d7/d73/tutorial_raster_io_gdal.html</URL>
+  </Source>
+
+  <Source>
+    <Tag>SentinelHub</Tag>
+    <SourceType>WebSite</SourceType>
+    <CorporateAuthor>Sentinel Hub</CorporateAuthor>
+    <Title>Custom Scripts Repository</Title>
+    <URL>https://custom-scripts.sentinel-hub.com/custom-scripts/</URL>
+  </Source>
+
+  <Source>
+    <Tag>Rockwell2021</Tag>
+    <SourceType>JournalArticle</SourceType>
+    <Author>
+      <Author><Last>Rockwell</Last><First>R.</First></Author>
+    </Author>
+    <Title>Landscape change and climate gradients across northern Manitoba</Title>
+    <JournalName>Canadian Journal of Remote Sensing</JournalName>
+    <Year>2021</Year>
+    <Volume>47</Volume>
+    <Issue>1</Issue>
+    <Pages>85-101</Pages>
+  </Source>
+
+  <Source>
+    <Tag>Atkinson2014</Tag>
+    <SourceType>JournalArticle</SourceType>
+    <Author>
+      <Author><Last>Atkinson</Last><First>D.</First></Author>
+    </Author>
+    <Title>Participatory mapping, Indigenous knowledge, and Arctic environmental change</Title>
+    <JournalName>Applied Geography</JournalName>
+    <Year>2014</Year>
+    <Volume>54</Volume>
+    <Pages>102-112</Pages>
+  </Source>
+</Sources>
