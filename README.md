@@ -155,7 +155,10 @@ These scripts are **not required** for the main processing workflow.
 ---
 
 ## 📝 Data Sources and Citations
-Full citations in final paper. This project uses publicly available Earth observation data accessed via the VITO openEO platform.
+A complete, versioned bibliography (Word-compatible) is available in:
+`docs/references-word.xml`
+Full citations in final paper. 
+This project uses publicly available Earth observation data accessed via the VITO openEO platform.
 
 **Satellite Data**
 _Sentinel-2_
